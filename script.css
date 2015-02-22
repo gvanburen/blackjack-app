@@ -1,0 +1,43 @@
+body {
+	background-color: green;
+}
+.gameButton {
+	height: 50px;
+	width: 200px;
+	background-color: white;
+	color: black;
+	border: 1px solid;
+	border-radius: 10px;
+	font-size: 1em;
+}
+
+span { 
+	display: block; 
+}
+
+.outline {
+	width: 100px;
+	text-align: center;
+	padding: 10px;
+	margin: 10px;
+	background: #FFF;
+	border-radius: 6px; 
+}
+
+.top {
+	text-align: left;
+}
+
+.bottom {
+	text-align: right;
+}
+
+.Spades,
+.Clubs {
+	color: #000;
+}
+
+.Diamonds,
+.Hearts {
+	color: #cc0033;
+}

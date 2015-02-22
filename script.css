@@ -1,6 +1,7 @@
 body {
 	background-color: green;
 }
+
 .gameButton {
 	height: 50px;
 	width: 200px;
@@ -9,6 +10,11 @@ body {
 	border: 1px solid;
 	border-radius: 10px;
 	font-size: 1em;
+}
+
+.displayCards {
+	width: 100%;
+	float: left;
 }
 
 span { 
@@ -21,7 +27,8 @@ span {
 	padding: 10px;
 	margin: 10px;
 	background: #FFF;
-	border-radius: 6px; 
+	border-radius: 6px;
+	float:left;
 }
 
 .top {

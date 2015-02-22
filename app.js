@@ -75,29 +75,50 @@ Deck.prototype.shuffle = function(){
 	}
 };
 
+//Method to deal cards
+Deck.prototype.deal = function(){
+	a = this.deck[this.deck.length - 1].displayCard();
+	b = this.deck[this.deck.length - 2].displayCard();
+	return a, b;
+};
+
+Deck.prototype.hit = function(){
+	a = this.deck[this.deck.length - 1].displayCard();
+	return a;
+}
+
 //Game Functionality
 
 
 //Game Buttons 
 var myDeck = new Deck();
-myDeck.build();
-myDeck.shuffle();
-console.log(myDeck.deck);
-var test = myDeck.deck[1].displayCard();;
-$('.displayCards').append(test);
 
-
+//Build the deck
 $('#build').on('click', function(){
-	alert('you clicked');
 	myDeck.build();
+	console.log(myDeck.deck.length);
 });
 
-$('#shuffle').click(function(){
-	alert('you clicked');
+//Shuffle the deck
+$('#shuffle').on('click', function(){
   	myDeck.shuffle();
- 	console.log(myDeck.deck);
 });
 
+//Deal the first two cards
+$('#deal').on('click', function(){
+	myDeck.deal();
+	$('.displayCards').append(a);
+	$('.displayCards').append(b);
+	myDeck.deck.pop();
+	myDeck.deck.pop();
+});
+
+//Deal one card at a time
+$('#hit').on('click',function(){
+	myDeck.hit();
+	$('.displayCards').append(a);
+	myDeck.deck.pop();
+});
 
 });
 

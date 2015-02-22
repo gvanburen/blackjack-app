@@ -79,7 +79,9 @@ Deck.prototype.shuffle = function(){
 Deck.prototype.deal = function(){
 	a = this.deck[this.deck.length - 1].displayCard();
 	b = this.deck[this.deck.length - 2].displayCard();
-	return a, b;
+	c = this.deck[this.deck.length - 3].displayCard();
+	d = this.deck[this.deck.length - 4].displayCard();
+	return a, b, c, d;
 };
 
 Deck.prototype.hit = function(){
@@ -88,10 +90,19 @@ Deck.prototype.hit = function(){
 }
 
 //Game Functionality
-
+/*
+1. Build Deck
+2. Shuffle Deck
+3. Deal Player's Hand
+4. Deal Dealer's Hand
+5. Hit for More Cards to Player
+6. Stand will initiate more cards being dealt to dealer (if applicable)
+*/
 
 //Game Buttons 
 var myDeck = new Deck();
+var dealer = $('.dealerCards');
+var player = $('.playerCards');
 
 //Build the deck
 $('#build').on('click', function(){
@@ -107,8 +118,12 @@ $('#shuffle').on('click', function(){
 //Deal the first two cards
 $('#deal').on('click', function(){
 	myDeck.deal();
-	$('.displayCards').append(a);
-	$('.displayCards').append(b);
+	player.append(a);
+	dealer.append(b);
+	player.append(c);
+	dealer.append(d);
+	myDeck.deck.pop();
+	myDeck.deck.pop();
 	myDeck.deck.pop();
 	myDeck.deck.pop();
 });
@@ -116,9 +131,17 @@ $('#deal').on('click', function(){
 //Deal one card at a time
 $('#hit').on('click',function(){
 	myDeck.hit();
-	$('.displayCards').append(a);
+	player.append(a);
 	myDeck.deck.pop();
 });
+
+
+
+
+
+
+//Game Logic
+
 
 });
 

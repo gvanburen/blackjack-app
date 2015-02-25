@@ -18,6 +18,7 @@ var suits = {
 var Card = function(value, suit) {
 	this.value = value;
 	this.suit = suit;
+	this.visible = false;
 };
 
 //Determine the card value
@@ -46,7 +47,11 @@ Card.prototype.getName = function(){
 };
 
 Card.prototype.displayCard = function(){
-	return ('<div class="outline ' + this.suit.name + '"><div class="top"><span>' + this.getName() + '</span><span>' + this.suit.symbol + '</span></div><h1>' + this.suit.symbol + '</h1><div class="bottom"><span>' + this.suit.symbol + '</span><span>' + this.getName() + '</span></div></div>')
+	if (this.visible) {
+		return ('<div class="outline ' + this.suit.name + '"><div class="top"><span>' + this.getName() + '</span><span>' + this.suit.symbol + '</span></div><div class="middle"><h1>' + this.suit.symbol + '</h1></div><div class="bottom"><span>' + this.suit.symbol + '</span><span>' + this.getName() + '</span></div></div>')
+	} else {
+		return ('<div class="outline cardBack ' + this.suit.name + '"><div class="top"><span>' + this.getName() + '</span><span>' + this.suit.symbol + '</span></div><div class="middle"><h1>' + this.suit.symbol + '</h1></div><div class="bottom"><span>' + this.suit.symbol + '</span><span>' + this.getName() + '</span></div></div>')
+	}
 };
 
 //Class for Deck
@@ -76,38 +81,105 @@ Deck.prototype.shuffle = function(){
 };
 
 //Method to deal cards
-Deck.prototype.deal = function(){
-	a = this.deck[this.deck.length - 1].displayCard();
-	b = this.deck[this.deck.length - 2].displayCard();
-	c = this.deck[this.deck.length - 3].displayCard();
-	d = this.deck[this.deck.length - 4].displayCard();
-	return a, b, c, d;
+Deck.prototype.deal = function(visible){
+	visible = visible || false;
+	if (visible){
+		this.deck[this.deck.length - this.deck.length].visible = true;
+	}
+	return this.deck.shift();
 };
 
 Deck.prototype.hit = function(){
-	a = this.deck[this.deck.length - 1].displayCard();
-	return a;
+	return this.deck.shift();
 }
 
-//Game Functionality
-/*
-1. Build Deck
-2. Shuffle Deck
-3. Deal Player's Hand
-4. Deal Dealer's Hand
-5. Hit for More Cards to Player
-6. Stand will initiate more cards being dealt to dealer (if applicable)
-*/
+Deck.prototype.handTotal = function(){
+	var total = 0;
+  var aces = 0;
+	for (var i = 0; i < this.deck.length; i++) {
+		if (this.deck[i].getValue() == 1) {
+      aces++;
+    }
+  	total += this.deck[i].getValue();
+  }
+  if (aces && total < 12){
+    total += 10;
+  }
+  return total;
+};
+
+var winLose = function(number){
+  if (number >= 21){
+		$("div").removeClass("cardBack");
+    var dealerTotal = dealerHand.handTotal();
+  		while (dealerTotal < 17){
+    		dealerHand.deck.push(myDeck.deal(true));
+    		var html = dealerHand.deck[dealerHand.deck.length - 1].displayCard();
+				dealer.append(html);
+    		var dealerTotal = dealerHand.handTotal();
+  		}
+    whoWon(dealerTotal, number);
+  }
+};
+
+var whoWon = function(dH, pH){
+  var dealer = $('.dealerCards');
+	var player = $('.playerCards');
+  //dealer hand == player hand
+  if (dH > 21 && pH > 21){
+    dealer.addClass('tie');
+    player.addClass('tie');
+  } else if (dH > 21 && pH <= 21){
+    dealer.addClass('loser');
+    player.addClass('winner');
+  } else if (dH == pH) {
+    dealer.addClass('tie');
+    player.addClass('tie');
+  } else if (dH > pH) {
+    if (dH <= 21) {
+      dealer.addClass('winner');
+      player.addClass('loser');
+    } else if (pH > 21) {
+      dealer.addClass('winner');
+    	player.addClass('loser');
+    } else {
+      dealer.addClass('tie');
+    	player.addClass('tie');
+    }
+  } else if (dH < pH){
+  	if (pH <= 21){
+      dealer.addClass('loser');
+      player.addClass('winner');
+    } else if (dH > 21) {
+      dealer.addClass('loser');
+      player.addClass('winner');
+    } else if (dH < 21) {
+      dealer.addClass('winner');
+      player.addClass('loser');
+    } else {
+      dealer.addClass('tie');
+    	player.addClass('tie');
+    }
+  }else {
+    dealer.addClass('tie');
+    player.addClass('tie');
+  }
+};
 
 //Game Buttons 
 var myDeck = new Deck();
+var playerHand = new Deck();
+var dealerHand = new Deck();
 var dealer = $('.dealerCards');
 var player = $('.playerCards');
 
 //Build the deck
 $('#build').on('click', function(){
+	dealer.empty();
+	player.empty();
 	myDeck.build();
-	console.log(myDeck.deck.length);
+	playerHand.deck = [];
+	dealerHand.deck = [];
 });
 
 //Shuffle the deck
@@ -117,30 +189,56 @@ $('#shuffle').on('click', function(){
 
 //Deal the first two cards
 $('#deal').on('click', function(){
-	myDeck.deal();
-	player.append(a);
-	dealer.append(b);
-	player.append(c);
-	dealer.append(d);
-	myDeck.deck.pop();
-	myDeck.deck.pop();
-	myDeck.deck.pop();
-	myDeck.deck.pop();
+	dealer.empty();
+  dealer.removeClass('tie winner loser');
+	player.empty();
+  player.removeClass('tie winner loser');
+  playerHand.deck = [];
+	dealerHand.deck = [];
+  for (var i=0; i < 4; i++) {
+		if (i == 0) {
+			dealerHand.deck.push(myDeck.deal(true));
+		} else if (i == 2) {
+			dealerHand.deck.push(myDeck.deal(false));
+		} else {
+			playerHand.deck.push(myDeck.deal(true));
+		}
+	}
+	for (var i = 0; i < 2; i++) {
+		var html = dealerHand.deck[i].displayCard();
+		dealer.append(html);
+		var html = playerHand.deck[i].displayCard();
+		player.append(html);
+	}
 });
 
 //Deal one card at a time
-$('#hit').on('click',function(){
-	myDeck.hit();
-	player.append(a);
-	myDeck.deck.pop();
+$('#hit').on('click',function(){		   
+  playerHand.deck.push(myDeck.deal(true));
+	var html = playerHand.deck[playerHand.deck.length - 1].displayCard();
+	player.append(html);
+	var playerTotal = playerHand.handTotal();
+  winLose(playerTotal);
+  console.log(playerTotal);
 });
 
-
-
-
-
+$('#stand').on('click',function(){
+  var playerTotal = playerHand.handTotal();
+  winLose(playerTotal);
+  console.log(playerTotal);
+  $("div").removeClass("cardBack");
+  var dealerTotal = dealerHand.handTotal();
+  while (dealerTotal < 17){
+    dealerHand.deck.push(myDeck.deal(true));
+    var html = dealerHand.deck[dealerHand.deck.length - 1].displayCard();
+		dealer.append(html);
+    var dealerTotal = dealerHand.handTotal();
+    whoWon(dealerTotal, playerTotal);
+  }
+});
 
 //Game Logic
+
 
 
 });

@@ -1,12 +1,12 @@
 body {
-	background-color: green;
+	background-color: #e3e3e3;
 }
 
 .gameButton {
 	height: 50px;
 	width: 200px;
-	background-color: white;
-	color: black;
+	background-color: grey;
+	color: white;
 	border: 1px solid;
 	border-radius: 10px;
 	font-size: 1em;
@@ -39,21 +39,25 @@ span {
 .top {
 	text-align: left;
 }
-
+.middle {
+	text-align:center;
+}
 .bottom {
 	text-align: right;
 }
 
-.cardBack {
+.outline.cardBack {
 	background-image: url('cardback.png');
 	background-size: cover;
-	width: 120px;
-	height: 163px;
-	margin: 10px;
-	border-radius: 6px;
-	float:left;
+	height: 143px;
+}
+
+.outline.cardBack > .top,
+.outline.cardBack > .middle,
+.outline.cardBack > .bottom {
 	display:none;
 }
+
 
 .Spades,
 .Clubs {
@@ -63,4 +67,16 @@ span {
 .Diamonds,
 .Hearts {
 	color: #cc0033;
+}
+
+.winner {
+  background-color: green;
+}
+
+.loser {
+  background-color: red;
+}
+
+.tie {
+  background-color: yellow;
 }
